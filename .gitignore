@@ -1,0 +1,6 @@
+
+
+*.log
+*.iml
+/동빈나파이썬강의
+/.ipynb_checkpoints
