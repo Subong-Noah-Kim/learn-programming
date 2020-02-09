@@ -1,5 +1,5 @@
 /*
-Enter your query here.
+Enter your query here. 수정
 Please append a semicolon ";" at the end of the query and enter your query in a single line to avoid error.
 */
 
