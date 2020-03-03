@@ -73,15 +73,15 @@ sublime Text 3 다운로드에 지장이 있어 우선 VScode를 사용하기로
 </ol>
 <h2 id="bulit-in-components">Bulit-in Components</h2>
 <p>위 단계에서 보았던 <a href="http://settings.py">settings.py</a> 파일의 INSTALLED_APPS 부분에 해당한다.</p>
-<pre><code>INSTALLED_APPS = [
-	'django.contrib.admin',
-	'django.contrib.auth',
-	'django.contrib.contenttypes',
-	'django.contrib.sessions',
-	'django.contrib.messages',
-	'django.contrib.staticfiles',
+<pre class=" language-python"><code class="prism  language-python">INSTALLED_APPS <span class="token operator">=</span> <span class="token punctuation">[</span>
+	<span class="token string">'django.contrib.admin'</span><span class="token punctuation">,</span>
+	<span class="token string">'django.contrib.auth'</span><span class="token punctuation">,</span>
+	<span class="token string">'django.contrib.contenttypes'</span><span class="token punctuation">,</span>
+	<span class="token string">'django.contrib.sessions'</span><span class="token punctuation">,</span>
+	<span class="token string">'django.contrib.messages'</span><span class="token punctuation">,</span>
+	<span class="token string">'django.contrib.staticfiles'</span><span class="token punctuation">,</span>
 
-]
+<span class="token punctuation">]</span>
 </code></pre>
 <p>예를들어 <code>'django.contrib.admin'</code> 이 app을 사용해서 <code>127.0.1:8000/admin/</code> 장고 관리자 페이지를 사용할 수 있다.</p>
 <h3 id="cmd---migrate">cmd - migrate</h3>
@@ -119,30 +119,30 @@ product를 저장하고, back-end에서 내가 만들어낸 product를 기억하
 	price      <span class="token operator">=</span> models<span class="token punctuation">.</span>TextField<span class="token punctuation">(</span><span class="token punctuation">)</span>
 </code></pre>
 <p>이후 <a href="http://settings.py">settings.py</a> 파일에서 INSTALLED_APPS 부분에 생성한 app을 추가해준다.</p>
-<pre><code>INSTALLED_APPS = [
-	'django.contrib.admin',
-	'django.contrib.auth',
-	'django.contrib.contenttypes',
-	'django.contrib.sessions',
-	'django.contrib.messages',
-	'django.contrib.staticfiles',
+<pre class=" language-python"><code class="prism  language-python">INSTALLED_APPS <span class="token operator">=</span> <span class="token punctuation">[</span>
+	<span class="token string">'django.contrib.admin'</span><span class="token punctuation">,</span>
+	<span class="token string">'django.contrib.auth'</span><span class="token punctuation">,</span>
+	<span class="token string">'django.contrib.contenttypes'</span><span class="token punctuation">,</span>
+	<span class="token string">'django.contrib.sessions'</span><span class="token punctuation">,</span>
+	<span class="token string">'django.contrib.messages'</span><span class="token punctuation">,</span>
+	<span class="token string">'django.contrib.staticfiles'</span><span class="token punctuation">,</span>
 	
-	# own
-	'products',
-]
+	<span class="token comment"># own</span>
+	<span class="token string">'products'</span><span class="token punctuation">,</span>
+<span class="token punctuation">]</span>
 </code></pre>
 <p>comma(,)에 유의하여 작성한 후 파이썬 스크립트를 모두 저장하고 CMD에서 아래 명령어를 입력한다.</p>
 <p><code>python manage.py makemigrations</code>:변화를 생성<br>
 <code>python manage.py migrate</code>: 적용<br>
 만약 여기까지 수행한 상태에서 다시 models.py를 수정 및 저장하고 <code>python manage.py makemigrations</code>를 시도하면 질문을 받게된다.</p>
 <p>파이썬 스크립트 수정 후 반영에 중요하므로, 위 두 줄의 코드는 숙지하도록 하자. 이제 products app(폴더) 내에 <a href="http://admin.py">admin.py</a> 파일을 확인해보자.</p>
-<pre><code>from django.contrib import admin
+<pre class=" language-python"><code class="prism  language-python"><span class="token keyword">from</span> django<span class="token punctuation">.</span>contrib <span class="token keyword">import</span> admin
 
-from .models import Product
-# models.py에서 Product class를 참조한다.
-# 같은 디렉토리(모듈) 내에 있어서 .으로 처리
+<span class="token keyword">from</span> <span class="token punctuation">.</span>models <span class="token keyword">import</span> Product
+<span class="token comment"># models.py에서 Product class를 참조한다.</span>
+<span class="token comment"># 같은 디렉토리(모듈) 내에 있어서 .으로 처리</span>
 
-admin.site.Register(Product)
+admin<span class="token punctuation">.</span>site<span class="token punctuation">.</span>Register<span class="token punctuation">(</span>Product<span class="token punctuation">)</span>
 </code></pre>
 <p>관리자 웹(Django Administration)을 확인하면 Products가 생성된 것을 확인할 수 있다. 여기서 product로 진입 후, 우측 상단의 add 버튼을 눌러보자.<br>
 위의 코드에서 지정해둔 대로 Title, Description, Price, Summary 4개의 값을 입력받을 수 있고, Summary의 경우 미리 입력한 default ‘This is cool!’ 문구를 확인할 수 있다.</p>
@@ -161,13 +161,13 @@ admin.site.Register(Product)
 <h2 id="new-model-fields">New Model Fields</h2>
 <p><code>https://docs.djangoproject.com/en/3.0/ref/models/fields/#field-types</code> : 장고에서 사용되는 데이터 타입 참고가능</p>
 <p>여러가지 형태로 field를 수정해보자.</p>
-<pre><code>from django.db import models
+<pre class=" language-python"><code class="prism  language-python"><span class="token keyword">from</span> django<span class="token punctuation">.</span>db <span class="token keyword">import</span> models
 
-class  Product(models.Model):
-	title = models.CharField(max_length=120) # max_length : required option in Charfield()
-	description = models.TextField(blank=True, null=True)
-	price = models.DecimalField(decimal_places=2, max_digits=10000)
-	summary = models.TextField()
+<span class="token keyword">class</span>  <span class="token class-name">Product</span><span class="token punctuation">(</span>models<span class="token punctuation">.</span>Model<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	title <span class="token operator">=</span> models<span class="token punctuation">.</span>CharField<span class="token punctuation">(</span>max_length<span class="token operator">=</span><span class="token number">120</span><span class="token punctuation">)</span> <span class="token comment"># max_length : required option in Charfield()</span>
+	description <span class="token operator">=</span> models<span class="token punctuation">.</span>TextField<span class="token punctuation">(</span>blank<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">,</span> null<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span>
+	price <span class="token operator">=</span> models<span class="token punctuation">.</span>DecimalField<span class="token punctuation">(</span>decimal_places<span class="token operator">=</span><span class="token number">2</span><span class="token punctuation">,</span> max_digits<span class="token operator">=</span><span class="token number">10000</span><span class="token punctuation">)</span>
+	summary <span class="token operator">=</span> models<span class="token punctuation">.</span>TextField<span class="token punctuation">(</span><span class="token punctuation">)</span>
 </code></pre>
 <p>레이아웃이 변경된 것을 확인할 수 있다.<br>
 python shell에서 데이터를 추가하는 것 또한 정상적으로 작동하는 것을 확인해볼 수 있다.</p>
