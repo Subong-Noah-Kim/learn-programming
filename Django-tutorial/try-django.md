@@ -5,7 +5,7 @@
 
 <h1 id="try-django">Try-Django</h1>
 <p>QR시스템은 기본적으로 파이썬을 활용할 것이므로 가급적 빠르게 적용할 수 있는 Django를 익히고자 함.</p>
-<h2 id="환경설정">환경설정</h2>
+<h2 id="environment-settings">Environment settings</h2>
 <ol>
 <li>cmd환경에서 working directory 생성
 <ul>
@@ -110,13 +110,13 @@ sublime Text 3 다운로드에 지장이 있어 우선 VScode를 사용하기로
 <p>product 폴더에 <a href="http://models.py">models.py</a> 파일을 열어보자.<br>
 product를 저장하고, back-end에서 내가 만들어낸 product를 기억하게 만들고 싶다.</p>
 <p>product class에 title, description, price를 정의하고 이를 DB에 매핑하고자 한다.</p>
-<pre><code>from django.db import models
+<pre class=" language-python"><code class="prism  language-python"><span class="token keyword">from</span> django<span class="token punctuation">.</span>db <span class="token keyword">import</span> models
 
-# Create your models here.
-class  Product(models.Model):
-	title      = models.TextField()
-	decription = models.TextField()
-	price      = models.TextField()
+<span class="token comment"># Create your models here.</span>
+<span class="token keyword">class</span>  <span class="token class-name">Product</span><span class="token punctuation">(</span>models<span class="token punctuation">.</span>Model<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	title      <span class="token operator">=</span> models<span class="token punctuation">.</span>TextField<span class="token punctuation">(</span><span class="token punctuation">)</span>
+	decription <span class="token operator">=</span> models<span class="token punctuation">.</span>TextField<span class="token punctuation">(</span><span class="token punctuation">)</span>
+	price      <span class="token operator">=</span> models<span class="token punctuation">.</span>TextField<span class="token punctuation">(</span><span class="token punctuation">)</span>
 </code></pre>
 <p>이후 <a href="http://settings.py">settings.py</a> 파일에서 INSTALLED_APPS 부분에 생성한 app을 추가해준다.</p>
 <pre><code>INSTALLED_APPS = [
