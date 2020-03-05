@@ -34,7 +34,7 @@ b) <code>python -m venv "venv-name"</code><br>
 <li><code>django-admin</code> : 장고 어드민의 커맨드 확인</li>
 <li><code>mkdir src</code> : src 폴더 생성 (source의 약자)</li>
 <li><code>django-admin startproject "trydjango ."</code> : src 폴더 진입 후 프로젝트 생성</li>
-<li><code>python mange.py runserver</code>
+<li><code>python manage.py runserver</code>
 <ul>
 <li>실행 후 서버가 시작되었다는 문구와 함께 url을 확인할 수 있다. “<a href="http://127.0.0.1:8000/">http://127.0.0.1:8000/</a>”
 <ul>
@@ -176,5 +176,287 @@ python shell에서 데이터를 추가하는 것 또한 정상적으로 작동�
 <p>이 때, 기존에 DB에 있는 데이터는 새로 추가될 컬럼(field)에 대한 값을 가지고 있지 않다. 따라서 NULL을 허용하거나, default를 지정하주는 옵션이 필요하다.</p>
 <p>기존 4개의 fields에서 "feature"라는 field를 추가하고자 한다. <a href="http://model.py">model.py</a> 파일에 바로 추가 후 migration하면 경고(선택)문구를 확인할 수 있다. 여기서 1번인 "Provide a one-off default now"를 선택하고, default 값을 입력하여 진행할 수 있다. 또한, 추가하는 field 옵션으로 <code>null = True</code>나 <code>default='~~~'</code>를 입력하면 해당 문구는 발생하지 않는다.</p>
 <h2 id="default-homepage-to-custom-homepage">Default Homepage to Custom Homepage</h2>
-<p>(59:28~) <a href="https://www.youtube.com/watch?v=F5mRW0jo-U4">https://www.youtube.com/watch?v=F5mRW0jo-U4</a></p>
+<p>우선 첫 화면을 생성해보자(homepage view)<br>
+진행 중인 app 폴더에 <a href="http://view.py">view.py</a> 파일을 확인하고, 아래와 같이 "Hello, World"를 출력하는 HTML 코드를 작성한다.</p>
+<pre class=" language-python"><code class="prism  language-python"><span class="token keyword">from</span> django<span class="token punctuation">.</span>http <span class="token keyword">import</span> HttpResponse
+<span class="token keyword">from</span> django<span class="token punctuation">.</span>shortcuts <span class="token keyword">import</span> render
+
+<span class="token comment"># Create your views here.</span>
+<span class="token keyword">def</span>  <span class="token function">home_view</span><span class="token punctuation">(</span><span class="token operator">*</span>args<span class="token punctuation">,</span> <span class="token operator">**</span>kwargs<span class="token punctuation">)</span><span class="token punctuation">:</span>
+<span class="token keyword">return</span> HttpResponse<span class="token punctuation">(</span><span class="token string">"&lt;h1&gt;Hello World&lt;/h1&gt;"</span><span class="token punctuation">)</span> <span class="token comment"># string of HTML code</span>
+</code></pre>
+<p>다음으로 프로젝트 폴더의 <a href="http://urls.py">urls.py</a> 파일을 열고, URL주소를 추가한다.</p>
+<pre class=" language-python"><code class="prism  language-python"><span class="token keyword">from</span> django<span class="token punctuation">.</span>contrib <span class="token keyword">import</span> admin
+<span class="token keyword">from</span> django<span class="token punctuation">.</span>urls <span class="token keyword">import</span> path
+
+<span class="token keyword">from</span> products <span class="token keyword">import</span> views <span class="token comment"># app 이름 사용</span>
+
+urlpatterns <span class="token operator">=</span> <span class="token punctuation">[</span>
+	path<span class="token punctuation">(</span><span class="token string">''</span><span class="token punctuation">,</span> views<span class="token punctuation">.</span>home_view<span class="token punctuation">,</span> name<span class="token operator">=</span><span class="token string">'home'</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+	path<span class="token punctuation">(</span><span class="token string">'admin/'</span><span class="token punctuation">,</span> admin<span class="token punctuation">.</span>site<span class="token punctuation">.</span>urls<span class="token punctuation">)</span><span class="token punctuation">,</span>
+<span class="token punctuation">]</span>
+</code></pre>
+<p>이후 “<a href="http://127.0.0.1:8000/">http://127.0.0.1:8000/</a>” 주소로 진입하면, 처음엔 장고 메인화면이었지만 지금은 바뀐 "Hello World"를 만날 수 있다.</p>
+<h2 id="url-routing-and-requests">URL Routing and Requests</h2>
+<pre class=" language-python"><code class="prism  language-python"><span class="token keyword">from</span> django<span class="token punctuation">.</span>http <span class="token keyword">import</span> HttpResponse
+<span class="token keyword">from</span> django<span class="token punctuation">.</span>shortcuts <span class="token keyword">import</span> render
+
+<span class="token comment"># Create your views here.</span>
+<span class="token keyword">def</span>  <span class="token function">home_view</span><span class="token punctuation">(</span><span class="token operator">*</span>args<span class="token punctuation">,</span> <span class="token operator">**</span>kwargs<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	<span class="token keyword">return</span> HttpResponse<span class="token punctuation">(</span><span class="token string">"&lt;h1&gt;Hello World&lt;/h1&gt;"</span><span class="token punctuation">)</span> <span class="token comment"># string of HTML code</span>
+<span class="token keyword">def</span>  <span class="token function">contact_view</span><span class="token punctuation">(</span><span class="token operator">*</span>args<span class="token punctuation">,</span> <span class="token operator">**</span>kwargs<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	<span class="token keyword">return</span> HttpResponse<span class="token punctuation">(</span><span class="token string">"&lt;h1&gt;Contact Page&lt;/h1&gt;"</span><span class="token punctuation">)</span> <span class="token comment"># string of HTML code</span>
+</code></pre>
+<pre class=" language-python"><code class="prism  language-python"><span class="token keyword">from</span> django<span class="token punctuation">.</span>contrib <span class="token keyword">import</span> admin
+<span class="token keyword">from</span> django<span class="token punctuation">.</span>urls <span class="token keyword">import</span> path
+
+<span class="token comment"># from products import views</span>
+<span class="token keyword">from</span> products<span class="token punctuation">.</span>views <span class="token keyword">import</span> home_view<span class="token punctuation">,</span> contact_view
+
+urlpatterns <span class="token operator">=</span> <span class="token punctuation">[</span>
+	path<span class="token punctuation">(</span><span class="token string">''</span><span class="token punctuation">,</span> home_view<span class="token punctuation">,</span> name<span class="token operator">=</span><span class="token string">'home'</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+	path<span class="token punctuation">(</span><span class="token string">'contact/'</span><span class="token punctuation">,</span> contact_view<span class="token punctuation">)</span><span class="token punctuation">,</span>
+	path<span class="token punctuation">(</span><span class="token string">'admin/'</span><span class="token punctuation">,</span> admin<span class="token punctuation">.</span>site<span class="token punctuation">.</span>urls<span class="token punctuation">)</span><span class="token punctuation">,</span>
+<span class="token punctuation">]</span>
+</code></pre>
+<p>위처럼 여러 개의 뷰를 생성해서 URL과 매칭할 수 있다.</p>
+<h3 id="이용자의-request를-서버에-남기고-추적하기">이용자의 request를 서버에 남기고 추적하기</h3>
+<pre class=" language-python"><code class="prism  language-python"><span class="token keyword">from</span> django<span class="token punctuation">.</span>http <span class="token keyword">import</span> HttpResponse
+<span class="token keyword">from</span> django<span class="token punctuation">.</span>shortcuts <span class="token keyword">import</span> render
+
+<span class="token comment"># Create your views here.</span>
+<span class="token keyword">def</span>  <span class="token function">home_view</span><span class="token punctuation">(</span>request<span class="token punctuation">,</span> <span class="token operator">*</span>args<span class="token punctuation">,</span> <span class="token operator">**</span>kwargs<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	<span class="token keyword">print</span><span class="token punctuation">(</span>args<span class="token punctuation">,</span> kwargs<span class="token punctuation">)</span>
+	<span class="token keyword">print</span><span class="token punctuation">(</span>request<span class="token punctuation">.</span>user<span class="token punctuation">)</span>
+	<span class="token keyword">return</span> HttpResponse<span class="token punctuation">(</span><span class="token string">"&lt;h1&gt;Hello World&lt;/h1&gt;"</span><span class="token punctuation">)</span> <span class="token comment"># string of HTML code</span>
+</code></pre>
+<p>현재 작업 중이 관리자 계정으로 웹페이지 방문 시, 관리자 이름을 확인할 수 있고, 로그인되지 않은 유저의 방문시 AnonymousUser 임을 확인할 수 있다.</p>
+<h2 id="django-templates">Django Templates</h2>
+<p>먼저 현재 Django Project가 진행 중인 src 폴더 안에 template이라는 폴더를 생성한다. 그 후 폴더 안에 “home.html” 파일을 생성 후 아래와 같이 작성한다.</p>
+<pre class=" language-html"><code class="prism  language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">&gt;</span></span>Hello world<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>p</span><span class="token punctuation">&gt;</span></span>This is a Template<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>p</span><span class="token punctuation">&gt;</span></span>
+</code></pre>
+<p><a href="http://views.py">views.py</a> 파일에 아래와 같이 페이지(함수)를 추가한다.</p>
+<pre class=" language-python"><code class="prism  language-python"><span class="token keyword">def</span>  <span class="token function">home_view</span><span class="token punctuation">(</span>request<span class="token punctuation">,</span> <span class="token operator">*</span>args<span class="token punctuation">,</span> <span class="token operator">**</span>kwargs<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	<span class="token keyword">print</span><span class="token punctuation">(</span>args<span class="token punctuation">,</span> kwargs<span class="token punctuation">)</span>
+	<span class="token keyword">print</span><span class="token punctuation">(</span>request<span class="token punctuation">.</span>user<span class="token punctuation">)</span>
+	<span class="token keyword">return</span> render<span class="token punctuation">(</span>request<span class="token punctuation">,</span> <span class="token string">"home.html"</span><span class="token punctuation">,</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">)</span> <span class="token comment"># HTML template 사용</span>
+</code></pre>
+<p><a href="http://settings.py">settings.py</a> 에서 아래 부분을 확인한다.</p>
+<pre class=" language-python"><code class="prism  language-python">TEMPLATES <span class="token operator">=</span> <span class="token punctuation">[</span>
+	<span class="token punctuation">{</span>
+		<span class="token string">'BACKEND'</span><span class="token punctuation">:</span> <span class="token string">'django.template.backends.django.DjangoTemplates'</span><span class="token punctuation">,</span>
+<span class="token comment">#		'DIRS': ['/you/path/to/templates'],</span>
+<span class="token string">'DIRS'</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>os<span class="token punctuation">.</span>path<span class="token punctuation">.</span>join<span class="token punctuation">(</span>BASE_DIR<span class="token punctuation">,</span><span class="token string">"template"</span><span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token comment"># 하드코딩 말고 기존경로 반영</span>
+		<span class="token string">'APP_DIRS'</span><span class="token punctuation">:</span> <span class="token boolean">True</span><span class="token punctuation">,</span>
+		<span class="token string">'OPTIONS'</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+			<span class="token string">'context_processors'</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>
+				<span class="token string">'django.template.context_processors.debug'</span><span class="token punctuation">,</span>
+				<span class="token string">'django.template.context_processors.request'</span><span class="token punctuation">,</span>
+				<span class="token string">'django.contrib.auth.context_processors.auth'</span><span class="token punctuation">,</span>
+				<span class="token string">'django.contrib.messages.context_processors.messages'</span><span class="token punctuation">,</span>
+			<span class="token punctuation">]</span><span class="token punctuation">,</span>
+		<span class="token punctuation">}</span><span class="token punctuation">,</span>
+	<span class="token punctuation">}</span><span class="token punctuation">,</span>
+<span class="token punctuation">]</span>
+</code></pre>
+<p>새로 추가하는 항목들에 대해서 <a href="http://urls.py">urls.py</a>, <a href="http://views.py">views.py</a>, template~~.html 파일을 잘 추가해서 관리해주면 된다.</p>
+<h2 id="django-templating-engine">Django Templating Engine</h2>
+<p><strong>웹페이지에서 사용자 이름을 출력</strong><br>
+{{ }} 안에 request.user을 입력하면 된다. home.html 파일을 아래와 같이 수정 및 저장한다.</p>
+<pre class=" language-html"><code class="prism  language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">&gt;</span></span>Hello world<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">&gt;</span></span>
+{{ request.user }}
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>p</span><span class="token punctuation">&gt;</span></span>This is a Template<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>p</span><span class="token punctuation">&gt;</span></span>
+</code></pre>
+<p><strong>로그인여부확인</strong><br>
+로그인 여부를 True/False로 출력</p>
+<pre class=" language-html"><code class="prism  language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">&gt;</span></span>Hello world<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">&gt;</span></span>
+{{ request.user.is_authenticated }}
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>p</span><span class="token punctuation">&gt;</span></span>This is a Template<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>p</span><span class="token punctuation">&gt;</span></span>
+</code></pre>
+<p><strong>base template 활용하기</strong></p>
+<ol>
+<li>base.html 파일 생성</li>
+</ol>
+<pre class=" language-html"><code class="prism  language-html"><span class="token doctype">&lt;!doctype  html&gt;</span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>html</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>head</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>title</span><span class="token punctuation">&gt;</span></span>Coding for Entrepreneurs is doing Try Django<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>title</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>head</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>body</span><span class="token punctuation">&gt;</span></span>
+	{% block content %}
+	replace me
+	{% endblock %}
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>body</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>html</span><span class="token punctuation">&gt;</span></span>
+</code></pre>
+<ol start="2">
+<li>home.html 내용 수정</li>
+</ol>
+<pre class=" language-html"><code class="prism  language-html">{% extends 'base.html' %}
+
+{% block content %}
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">&gt;</span></span>Hello world<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>p</span><span class="token punctuation">&gt;</span></span>This is a Template<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>p</span><span class="token punctuation">&gt;</span></span>
+{% endblock %}
+</code></pre>
+<p>base.html에서 설정해준 <code>&lt;title&gt; &lt;/title&gt;</code>에 따라 웹페이지 실행 시에 상단 탭에 들어가는 이름이 바뀌었음을 확인할 수 있다.</p>
+<ol start="3">
+<li>about.html 내용 수정</li>
+</ol>
+<pre class=" language-html"><code class="prism  language-html">{% extends "base.html" %}
+
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">&gt;</span></span>About<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>p</span><span class="token punctuation">&gt;</span></span>This is a Template<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>p</span><span class="token punctuation">&gt;</span></span>
+</code></pre>
+<p>본문이 replace me로 바뀐 것을 확인할 수 있다.</p>
+<p>이런 식으로 여러 개의 html 파일(화면)을 일관성있게 관리할 수 있다.</p>
+<pre class=" language-html"><code class="prism  language-html"><span class="token doctype">&lt;!doctype  html&gt;</span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>html</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>head</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>title</span><span class="token punctuation">&gt;</span></span>Coding for Entrepreneurs is doing Try Django<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>title</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>head</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>body</span><span class="token punctuation">&gt;</span></span>
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">&gt;</span></span>This is a navbar<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">&gt;</span></span>
+	
+	{% block content %}
+	replace me
+	{% endblock %}
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>body</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>html</span><span class="token punctuation">&gt;</span></span>
+</code></pre>
+<p><code>&lt;h1&gt;</code> 태그로 "This is a navbar"라는 문구를 여러 html에 동시에 추가해 넣을 수 있다.</p>
+<h2 id="include-template-tag">Include Template Tag</h2>
+<p>navbar.html 파일을 생성하고 아래와 같이 입력한 다음 base.html 파일의 코드를 수정한다.</p>
+<pre class=" language-html"><code class="prism  language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>nav</span><span class="token punctuation">&gt;</span></span>
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>ul</span><span class="token punctuation">&gt;</span></span>
+		<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>li</span><span class="token punctuation">&gt;</span></span>Brand<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>li</span><span class="token punctuation">&gt;</span></span>
+		<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>li</span><span class="token punctuation">&gt;</span></span>Contact<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>li</span><span class="token punctuation">&gt;</span></span>
+		<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>li</span><span class="token punctuation">&gt;</span></span>About<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>li</span><span class="token punctuation">&gt;</span></span>
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>ul</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>nav</span><span class="token punctuation">&gt;</span></span>
+</code></pre>
+<pre class=" language-html"><code class="prism  language-html"><span class="token doctype">&lt;!doctype  html&gt;</span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>html</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>head</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>title</span><span class="token punctuation">&gt;</span></span>Coding for Entrepreneurs is doing Try Django<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>title</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>head</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>body</span><span class="token punctuation">&gt;</span></span>
+	{% include 'navbar.html' %}
+
+	{% block content %}
+	  replace me
+	{% endblock %}
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>body</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>html</span><span class="token punctuation">&gt;</span></span>
+</code></pre>
+<p>일관되게 navbar가 추가된 것을 확인할 수 있다.</p>
+<h2 id="rendering-context-in-a-template">Rendering Context in a Template</h2>
+<p>웹페이지를 꾸미는 것도 좋지만, 우리가 다루고자 하는 것은 데이터를 다루는 백엔드 영역이다.</p>
+<p>Django는 template과 template context를 결합해 regular html로 render한다. 그로 인해 유저는 이 화면을 볼 수 있는 것이다. Context는 any data type을 의미한다.</p>
+<p><a href="http://views.py">views.py</a> 파일을 살펴보자. 이 때 파이썬의 (key, value) 형태인 dictionary를 활용한다.</p>
+<pre class=" language-python"><code class="prism  language-python"><span class="token keyword">def</span>  <span class="token function">about_view</span><span class="token punctuation">(</span>request<span class="token punctuation">,</span> <span class="token operator">*</span>args<span class="token punctuation">,</span> <span class="token operator">**</span>kwargs<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	my_context <span class="token operator">=</span> <span class="token punctuation">{</span>
+		<span class="token string">"my_text"</span><span class="token punctuation">:</span> <span class="token string">"This is about us"</span><span class="token punctuation">,</span>
+		<span class="token string">"my_number"</span><span class="token punctuation">:</span> <span class="token number">123</span><span class="token punctuation">,</span>
+		<span class="token string">"my_list"</span><span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token number">123</span><span class="token punctuation">,</span><span class="token number">4242</span><span class="token punctuation">,</span><span class="token number">123123</span><span class="token punctuation">]</span>
+		<span class="token punctuation">}</span>
+	<span class="token keyword">return</span> render<span class="token punctuation">(</span>request<span class="token punctuation">,</span> <span class="token string">"about.html"</span><span class="token punctuation">,</span> my_context<span class="token punctuation">)</span> <span class="token comment"># HTML template 사용</span>
+</code></pre>
+<p>이제 about.html 파일을 일부 수정하자.</p>
+<pre class=" language-html"><code class="prism  language-html">{% extends "base.html" %}
+
+{% block content %}
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">&gt;</span></span>About<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">&gt;</span></span>
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>p</span><span class="token punctuation">&gt;</span></span>This is a Template<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>p</span><span class="token punctuation">&gt;</span></span>
+
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>p</span><span class="token punctuation">&gt;</span></span>
+		{{ my_text }}, {{ my_number }}, {{ my_list }}
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>p</span><span class="token punctuation">&gt;</span></span>
+
+{% endblock content %}
+</code></pre>
+<p>위에서 입력한 (key,value) 타입의 데이터를 웹 페이지에서 확인 가능하다.</p>
+<h2 id="for-loop-in-a-template">For Loop in a Template</h2>
+<p>템플릿 내에서 Loop를 수행해보자.</p>
+<p>about.html과 <a href="http://views.py">views.py</a> 두 파일을 아래와 같이 수정하면 Loop에 따라 웹페이지의 문구가 작성된 것을 확인할 수 있다.</p>
+<p>하지만 이것 또한 하드 코딩이기 때문에 좀 더 합리적인 방법이 필요해보인다.</p>
+<pre class=" language-html"><code class="prism  language-html">{% extends "base.html" %}
+
+{% block content %}
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">&gt;</span></span>About<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>p</span><span class="token punctuation">&gt;</span></span>This is a Template<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>p</span><span class="token punctuation">&gt;</span></span>
+
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>p</span><span class="token punctuation">&gt;</span></span>
+	{{ my_text }}, {{ my_number }}, {{ my_list }}
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>p</span><span class="token punctuation">&gt;</span></span>
+
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>ul</span><span class="token punctuation">&gt;</span></span>
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>li</span><span class="token punctuation">&gt;</span></span>Item 1<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>li</span><span class="token punctuation">&gt;</span></span>
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>li</span><span class="token punctuation">&gt;</span></span>Item 2<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>li</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>ul</span><span class="token punctuation">&gt;</span></span>
+
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>ul</span><span class="token punctuation">&gt;</span></span>
+	{% for my_sub_item in my_list %}
+		<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>li</span><span class="token punctuation">&gt;</span></span> {{ forloop.counter }} - {{my_sub_item}} <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>li</span><span class="token punctuation">&gt;</span></span> 
+	{% endfor %}
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>ul</span><span class="token punctuation">&gt;</span></span>
+
+{% endblock content %}
+</code></pre>
+<pre class=" language-python"><code class="prism  language-python"><span class="token keyword">def</span>  <span class="token function">about_view</span><span class="token punctuation">(</span>request<span class="token punctuation">,</span> <span class="token operator">*</span>args<span class="token punctuation">,</span> <span class="token operator">**</span>kwargs<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	my_context <span class="token operator">=</span> <span class="token punctuation">{</span>
+		<span class="token string">"my_text"</span><span class="token punctuation">:</span> <span class="token string">"This is about us"</span><span class="token punctuation">,</span>
+		<span class="token string">"my_number"</span><span class="token punctuation">:</span> <span class="token number">123</span><span class="token punctuation">,</span>
+		<span class="token string">"my_list"</span><span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token number">1313</span><span class="token punctuation">,</span><span class="token number">4242</span><span class="token punctuation">,</span><span class="token number">312</span><span class="token punctuation">,</span><span class="token string">"Abc"</span><span class="token punctuation">]</span>
+	<span class="token punctuation">}</span>
+
+<span class="token keyword">for</span> item <span class="token keyword">in</span> <span class="token punctuation">[</span><span class="token number">123</span><span class="token punctuation">,</span><span class="token number">12331</span><span class="token punctuation">,</span> <span class="token number">1233</span><span class="token punctuation">]</span><span class="token punctuation">:</span>
+	my_context<span class="token punctuation">[</span><span class="token string">'item1'</span><span class="token punctuation">]</span> <span class="token operator">=</span> item
+
+<span class="token keyword">return</span> render<span class="token punctuation">(</span>request<span class="token punctuation">,</span> <span class="token string">"about.html"</span><span class="token punctuation">,</span> my_context<span class="token punctuation">)</span> <span class="token comment"># HTML template 사용</span>
+</code></pre>
+<h2 id="using-conditions-in-a-template">Using Conditions in a Template</h2>
+<p>if-else의 조건문을 템플릿에서 사용할 수 있다.<br>
+위에서와 동일하게 about.html, <a href="http://views.py">views.py</a> 파일을 수정하면 웹 페이지에 변화사항을 확인할 수 있다.</p>
+<pre class=" language-html"><code class="prism  language-html">{% extends "base.html" %}
+
+{% block content %}
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">&gt;</span></span>About<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>p</span><span class="token punctuation">&gt;</span></span>This is a Template<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>p</span><span class="token punctuation">&gt;</span></span>
+
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>p</span><span class="token punctuation">&gt;</span></span>
+	{{ my_text }}, {{ my_number }}, {{ my_list }}
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>p</span><span class="token punctuation">&gt;</span></span>
+
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>ul</span><span class="token punctuation">&gt;</span></span>
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>li</span><span class="token punctuation">&gt;</span></span>Item 1<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>li</span><span class="token punctuation">&gt;</span></span>
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>li</span><span class="token punctuation">&gt;</span></span>Item 2<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>li</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>ul</span><span class="token punctuation">&gt;</span></span>
+
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>ul</span><span class="token punctuation">&gt;</span></span>
+	{% for abc in my_list %}
+		{% if abc == 312 %}
+			<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>li</span><span class="token punctuation">&gt;</span></span> {{ forloop.counter }} - {{ abc|add:22 }} <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>li</span><span class="token punctuation">&gt;</span></span>
+		{% elif abc == "Abc" %}
+			<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>li</span><span class="token punctuation">&gt;</span></span> This is not the network <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>li</span><span class="token punctuation">&gt;</span></span>
+		{% else %}
+			<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>li</span><span class="token punctuation">&gt;</span></span> {{ forloop.counter }} - {{ abc }} <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>li</span><span class="token punctuation">&gt;</span></span>
+		{% endif %}
+	{% endfor %}
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>ul</span><span class="token punctuation">&gt;</span></span>
+
+{% endblock content %}
+</code></pre>
+<pre class=" language-python"><code class="prism  language-python"><span class="token keyword">def</span>  <span class="token function">about_view</span><span class="token punctuation">(</span>request<span class="token punctuation">,</span> <span class="token operator">*</span>args<span class="token punctuation">,</span> <span class="token operator">**</span>kwargs<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	my_context <span class="token operator">=</span> <span class="token punctuation">{</span>
+	<span class="token string">"my_text"</span><span class="token punctuation">:</span> <span class="token string">"This is about us"</span><span class="token punctuation">,</span>
+	<span class="token string">"this_is_true"</span><span class="token punctuation">:</span> <span class="token boolean">True</span><span class="token punctuation">,</span>
+	<span class="token string">"my_number"</span><span class="token punctuation">:</span> <span class="token number">123</span><span class="token punctuation">,</span>
+	<span class="token string">"my_list"</span><span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token number">1313</span><span class="token punctuation">,</span><span class="token number">4242</span><span class="token punctuation">,</span><span class="token number">312</span><span class="token punctuation">,</span><span class="token string">"Abc"</span><span class="token punctuation">]</span>
+	<span class="token punctuation">}</span>
+	<span class="token keyword">for</span> item <span class="token keyword">in</span> <span class="token punctuation">[</span><span class="token number">123</span><span class="token punctuation">,</span><span class="token number">12331</span><span class="token punctuation">,</span> <span class="token number">1233</span><span class="token punctuation">]</span><span class="token punctuation">:</span>
+		my_context<span class="token punctuation">[</span><span class="token string">'item1'</span><span class="token punctuation">]</span> <span class="token operator">=</span> item
+	<span class="token keyword">return</span> render<span class="token punctuation">(</span>request<span class="token punctuation">,</span> <span class="token string">"about.html"</span><span class="token punctuation">,</span> my_context<span class="token punctuation">)</span> <span class="token comment"># HTML template 사용</span>
+</code></pre>
 
