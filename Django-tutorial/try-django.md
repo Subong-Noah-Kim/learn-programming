@@ -1,6 +1,9 @@
 ---
-
-
+layout: "post"
+title: "Writing Liquid Template in Markdown Code Blocks with Jekyll"
+date: "2016-04-26 21:00"
+tags: [jekyll, website, liquid]
+lcb: "{"
 ---
 
 
