@@ -75,7 +75,7 @@ sublime Text 3 다운로드에 지장이 있어 우선 VScode를 사용하기로
 <h2 id="bulit-in-components">Bulit-in Components</h2>
 <p>위 단계에서 보았던 <a href="http://settings.py">settings.py</a> 파일의 INSTALLED_APPS 부분에 해당한다.</p>
 <pre class=" language-python"><code class="prism  language-python">
-{% raw %}
+{% \raw %}
 INSTALLED_APPS <span class="token operator">=</span> <span class="token punctuation">[</span>
 	<span class="token string">'django.contrib.admin'</span><span class="token punctuation">,</span>
 	<span class="token string">'django.contrib.auth'</span><span class="token punctuation">,</span>
@@ -83,8 +83,9 @@ INSTALLED_APPS <span class="token operator">=</span> <span class="token punctuat
 	<span class="token string">'django.contrib.sessions'</span><span class="token punctuation">,</span>
 	<span class="token string">'django.contrib.messages'</span><span class="token punctuation">,</span>
 	<span class="token string">'django.contrib.staticfiles'</span><span class="token punctuation">,</span>
-{% endraw %}
+
 <span class="token punctuation">]</span>
+{% \endraw %}
 </code></pre>
 <p>예를들어 <code>'django.contrib.admin'</code> 이 app을 사용해서 <code>127.0.1:8000/admin/</code> 장고 관리자 페이지를 사용할 수 있다.</p>
 <h3 id="cmd---migrate">cmd - migrate</h3>
