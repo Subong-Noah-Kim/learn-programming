@@ -2,7 +2,7 @@
 
 
 ---
-{% \raw %}
+{% raw %}
 
 <h1 id="try-django">Try-Django</h1>
 <p>QR시스템은 기본적으로 파이썬을 활용할 것이므로 가급적 빠르게 적용할 수 있는 Django를 익히고자 함.</p>
@@ -463,4 +463,4 @@ urlpatterns <span class="token operator">=</span> <span class="token punctuation
 	<span class="token keyword">return</span> render<span class="token punctuation">(</span>request<span class="token punctuation">,</span> <span class="token string">"about.html"</span><span class="token punctuation">,</span> my_context<span class="token punctuation">)</span> <span class="token comment"># HTML template 사용</span>
 </code></pre>
 
-{% \endraw %}
+{% endraw %}
