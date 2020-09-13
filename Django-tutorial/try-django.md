@@ -1,10 +1,7 @@
 ---
-layout: "post"
-title: "Writing Liquid Template in Markdown Code Blocks with Jekyll"
-tags: [jekyll, website, liquid]
-lcb: "{"
----
 
+
+---
 
 <h1 id="try-django">Try-Django</h1>
 <p>QR시스템은 기본적으로 파이썬을 활용할 것이므로 가급적 빠르게 적용할 수 있는 Django를 익히고자 함.</p>
@@ -76,9 +73,7 @@ sublime Text 3 다운로드에 지장이 있어 우선 VScode를 사용하기로
 </ol>
 <h2 id="bulit-in-components">Bulit-in Components</h2>
 <p>위 단계에서 보았던 <a href="http://settings.py">settings.py</a> 파일의 INSTALLED_APPS 부분에 해당한다.</p>
-
 <pre class=" language-python"><code class="prism  language-python">
-
 INSTALLED_APPS <span class="token operator">=</span> <span class="token punctuation">[</span>
 	<span class="token string">'django.contrib.admin'</span><span class="token punctuation">,</span>
 	<span class="token string">'django.contrib.auth'</span><span class="token punctuation">,</span>
@@ -88,9 +83,7 @@ INSTALLED_APPS <span class="token operator">=</span> <span class="token punctuat
 	<span class="token string">'django.contrib.staticfiles'</span><span class="token punctuation">,</span>
 
 <span class="token punctuation">]</span>
-
 </code></pre>
-
 <p>예를들어 <code>'django.contrib.admin'</code> 이 app을 사용해서 <code>127.0.1:8000/admin/</code> 장고 관리자 페이지를 사용할 수 있다.</p>
 <h3 id="cmd---migrate">cmd - migrate</h3>
 <p>migration 관련 명령어들은 models.py에 정의된 모델의 생성/변경내역을 히스토리관리, DB에 적용 등과 같은 기능을 제공하여 손쉽게 DB구조를 관리할 수 있게 해준다. (출처 : <a href="https://brownbears.tistory.com/443">https://brownbears.tistory.com/443</a>)</p>
@@ -278,9 +271,11 @@ urlpatterns <span class="token operator">=</span> <span class="token punctuation
 </code></pre>
 <p><strong>로그인여부확인</strong><br>
 로그인 여부를 True/False로 출력</p>
-<pre class=" language-html"><code class="prism  language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">&gt;</span></span>Hello world<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">&gt;</span></span>
+<pre class=" language-html"><code class="prism  language-html">{% raw %}
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">&gt;</span></span>Hello world<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">&gt;</span></span>
 {{ request.user.is_authenticated }}
 <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>p</span><span class="token punctuation">&gt;</span></span>This is a Template<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>p</span><span class="token punctuation">&gt;</span></span>
+{% endraw %}
 </code></pre>
 <p><strong>base template 활용하기</strong></p>
 <ol>
@@ -467,5 +462,17 @@ urlpatterns <span class="token operator">=</span> <span class="token punctuation
 		my_context<span class="token punctuation">[</span><span class="token string">'item1'</span><span class="token punctuation">]</span> <span class="token operator">=</span> item
 	<span class="token keyword">return</span> render<span class="token punctuation">(</span>request<span class="token punctuation">,</span> <span class="token string">"about.html"</span><span class="token punctuation">,</span> my_context<span class="token punctuation">)</span> <span class="token comment"># HTML template 사용</span>
 </code></pre>
-
+<h2 id="template-tags-and-filters">Template Tags and Filters</h2>
+<p>Built-in template tags and Filters 페이지 참고(<a href="http://djangoproject.com">djangoproject.com</a>)</p>
+<ul>
+<li><code>|capfirst</code></li>
+</ul>
+<h2 id="render-data-from-the-database-with-a-model">Render Data from the Database with a Model</h2>
+<p>우선 render하기 전에 실재로 데이터에 접근하는 방식을 이해하자. 터미널에서 파이썬 shell에 접근한다.</p>
+<p><code>python manage.py shell</code></p>
+<p>파이썬 shell 활성화 후,</p>
+<p><code>from products.models import Product</code><br>
+<code>Product.objects.get(id=1)</code></p>
+<p>장고에선 지정하지 않아도 id가 자동으로 입력되고 있음을 확인할 수 있다.(0001_initial.py)</p>
+<p>중간에 에러가 발생해서 제대로 안됨 ㅠㅠ</p>
 
