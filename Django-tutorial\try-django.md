@@ -265,9 +265,11 @@ urlpatterns <span class="token operator">=</span> <span class="token punctuation
 <h2 id="django-templating-engine">Django Templating Engine</h2>
 <p><strong>웹페이지에서 사용자 이름을 출력</strong><br>
 {{ }} 안에 request.user을 입력하면 된다. home.html 파일을 아래와 같이 수정 및 저장한다.</p>
-<pre class=" language-html"><code class="prism  language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">&gt;</span></span>Hello world<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">&gt;</span></span>
+<pre class=" language-html"><code class="prism  language-html">{% raw %}
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">&gt;</span></span>Hello world<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">&gt;</span></span>
 {{ request.user }}
 <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>p</span><span class="token punctuation">&gt;</span></span>This is a Template<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>p</span><span class="token punctuation">&gt;</span></span>
+{% endraw %}
 </code></pre>
 <p><strong>로그인여부확인</strong><br>
 로그인 여부를 True/False로 출력</p>
